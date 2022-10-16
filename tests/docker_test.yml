@@ -1,0 +1,34 @@
+---
+-
+  hosts: localhost 
+
+  tasks:
+    -
+      name: 'Install dependencies'
+      become: yes
+      ansible.builtin.apt:
+        name: 
+          - 'apt-transport-https'
+          - 'ca-certificates'
+          - 'curl'
+          - 'gnupg2' 
+          - 'software-properties-common'
+    
+    -
+      name: Import/Dearmor/Copy the GPG key and add the repo
+      import_role: 
+        name: sokratisvas.apt_key_repo_installer
+      vars:
+        - key_url: https://download.docker.com/linux/debian/gpg 
+        - key_name: docker-gpg-key
+        - repo_url: https://download.docker.com/linux/debian bullseye stable
+        - repo_name: docker-repo
+    
+    -
+      name: 'Install Docker'
+      become: yes
+      ansible.builtin.apt:
+        name: 
+          - 'docker-ce'
+          - 'docker-ce-cli'
+          - 'containerd.io'
